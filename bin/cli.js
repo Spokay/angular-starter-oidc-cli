@@ -1,0 +1,30 @@
+#!/usr/bin/env node
+
+/**
+ * CLI entry point for angular-starter-cli
+ */
+
+const { program } = require('commander');
+const { createAngularStarter } = require('../src/index');
+const packageJson = require('../package.json');
+
+program
+  .name('angular-starter')
+  .description('CLI to create Angular starter applications from templates')
+  .version(packageJson.version);
+
+program
+  .command('create <project-name>')
+  .description('Create a new Angular starter project')
+  .option('-t, --template <url>', 'Template repository URL')
+  .option('-p, --path <path>', 'Path where project should be created', '.')
+  .action((projectName, options) => {
+    createAngularStarter(projectName, options);
+  });
+
+program.parse(process.argv);
+
+// Show help if no command is provided
+if (!process.argv.slice(2).length) {
+  program.outputHelp();
+}
