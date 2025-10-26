@@ -41,6 +41,20 @@ angular-starter create my-app --template <template-url> --path ./projects
 - `-V, --version`: Output the version number
 - `-h, --help`: Display help information
 
+## Configuration
+
+You can create a `.angular-starter.json` file in your home directory or project root to configure default templates:
+
+```json
+{
+  "defaultTemplate": "https://github.com/angular/quickstart",
+  "templates": {
+    "quickstart": "https://github.com/angular/quickstart",
+    "material": "https://github.com/angular/material-starter"
+  }
+}
+```
+
 ## Features
 
 - 🚀 Quick project scaffolding from any Git template
@@ -48,6 +62,7 @@ angular-starter create my-app --template <template-url> --path ./projects
 - 💬 Interactive prompts for missing information
 - ✨ Clean and user-friendly CLI interface
 - 🎨 Colored output for better readability
+- ⚙️ Optional configuration file support
 
 ## How It Works
 
