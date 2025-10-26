@@ -60,7 +60,7 @@ Create a `.angular-starter.json` file:
   "defaultTemplate": "https://github.com/angular/quickstart",
   "templates": {
     "basic": "https://github.com/angular/quickstart",
-    "material": "https://github.com/angular/material-starter",
+    "material": "https://github.com/yourusername/your-material-template",
     "enterprise": "https://github.com/yourusername/enterprise-template"
   }
 }

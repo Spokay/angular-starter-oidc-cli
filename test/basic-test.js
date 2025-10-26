@@ -16,7 +16,7 @@ try {
   
   const packageJson = require('../package.json');
   assert(packageJson.name === 'angular-starter-cli', 'Package name should be angular-starter-cli');
-  assert(packageJson.bin['angular-starter'], 'Binary should be defined');
+  assert(packageJson.bin['angular-starter'] === './bin/cli.js', 'Binary should point to ./bin/cli.js');
   
   console.log('✅ Test 1 passed: package.json is valid');
 } catch (error) {
