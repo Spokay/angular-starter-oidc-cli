@@ -1,0 +1,27 @@
+{
+  "name": "angular-starter-cli",
+  "version": "1.0.0",
+  "description": "A CLI for creating a starter app in Angular with a template and customizable with the arguments provided",
+  "main": "src/index.js",
+  "bin": {
+    "angular-starter": "./bin/cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "angular",
+    "cli",
+    "starter",
+    "template",
+    "generator"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^11.0.0",
+    "chalk": "^4.1.2",
+    "ora": "^5.4.1",
+    "inquirer": "^8.2.5"
+  }
+}
