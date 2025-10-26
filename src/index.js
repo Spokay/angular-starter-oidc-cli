@@ -88,8 +88,14 @@ function cloneTemplate(templateUrl, targetPath) {
       throw new Error('Invalid template URL format');
     }
 
+    // Additional check: reject URLs containing special git options
+    if (templateUrl.includes('--upload-pack') || templateUrl.includes('-u')) {
+      throw new Error('Invalid template URL: contains forbidden git options');
+    }
+
     // Use spawn with array of arguments to prevent command injection
-    const result = spawnSync('git', ['clone', templateUrl, targetPath], {
+    // Add --no-checkout to prevent any hooks from running during clone
+    const result = spawnSync('git', ['clone', '--', templateUrl, targetPath], {
       stdio: 'pipe',
       encoding: 'utf8'
     });
