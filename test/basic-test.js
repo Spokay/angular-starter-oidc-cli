@@ -45,8 +45,16 @@ try {
   assert(typeof mainModule.createAngularStarter === 'function', 'Should export createAngularStarter function');
   assert(typeof mainModule.cloneTemplate === 'function', 'Should export cloneTemplate function');
   assert(typeof mainModule.customizeProject === 'function', 'Should export customizeProject function');
+  assert(typeof mainModule.isValidGitUrl === 'function', 'Should export isValidGitUrl function');
   
-  console.log('✅ Test 3 passed: Main module exports correct functions');
+  // Test URL validation
+  assert(mainModule.isValidGitUrl('https://github.com/user/repo.git') === true, 'Should accept valid HTTPS git URL');
+  assert(mainModule.isValidGitUrl('git@github.com:user/repo.git') === true, 'Should accept valid SSH git URL');
+  assert(mainModule.isValidGitUrl('https://github.com/user/repo') === true, 'Should accept valid HTTPS URL without .git');
+  assert(mainModule.isValidGitUrl('invalid url') === false, 'Should reject invalid URL');
+  assert(mainModule.isValidGitUrl('') === false, 'Should reject empty URL');
+  
+  console.log('✅ Test 3 passed: Main module exports correct functions and validates URLs');
 } catch (error) {
   console.error('❌ Test 3 failed:', error.message);
   process.exit(1);

@@ -3,7 +3,7 @@ const ora = require('ora');
 const inquirer = require('inquirer');
 const path = require('path');
 const fs = require('fs');
-const { execSync } = require('child_process');
+const { execSync, spawnSync } = require('child_process');
 
 /**
  * Main function to create an Angular starter project
@@ -83,9 +83,20 @@ async function createAngularStarter(projectName, options) {
  */
 function cloneTemplate(templateUrl, targetPath) {
   try {
-    execSync(`git clone ${templateUrl} "${targetPath}"`, {
-      stdio: 'pipe'
+    // Validate template URL format to prevent command injection
+    if (!isValidGitUrl(templateUrl)) {
+      throw new Error('Invalid template URL format');
+    }
+
+    // Use spawn with array of arguments to prevent command injection
+    const result = spawnSync('git', ['clone', templateUrl, targetPath], {
+      stdio: 'pipe',
+      encoding: 'utf8'
     });
+
+    if (result.error || result.status !== 0) {
+      throw new Error(result.stderr || result.error?.message || 'Git clone failed');
+    }
 
     // Remove .git directory to start fresh
     const gitDir = path.join(targetPath, '.git');
@@ -95,6 +106,17 @@ function cloneTemplate(templateUrl, targetPath) {
   } catch (error) {
     throw new Error(`Failed to clone template: ${error.message}`);
   }
+}
+
+/**
+ * Validate if the URL is a valid Git repository URL
+ * @param {string} url - URL to validate
+ * @returns {boolean} - True if valid, false otherwise
+ */
+function isValidGitUrl(url) {
+  // Allow HTTPS, SSH, and Git protocol URLs
+  const gitUrlPattern = /^(https?:\/\/|git@|git:\/\/)[\w\.\-@:\/~]+\.git$|^(https?:\/\/|git@|git:\/\/)[\w\.\-@:\/~]+$/i;
+  return gitUrlPattern.test(url);
 }
 
 /**
@@ -124,5 +146,6 @@ function customizeProject(projectName, targetPath) {
 module.exports = {
   createAngularStarter,
   cloneTemplate,
-  customizeProject
+  customizeProject,
+  isValidGitUrl
 };
