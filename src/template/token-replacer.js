@@ -27,6 +27,9 @@ async function replaceTokens(targetPath, config) {
       'package.json',
       'angular.json',
       'src/app/app.spec.ts',
+      'src/index.html',
+      'src/app/layout/header/header.html',
+      'src/app/layout/footer/footer.html',
       'README.md',
       'public/assets/app-config.json'
     ];
