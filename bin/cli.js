@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * CLI entry point for angular-starter-cli
+ * CLI entry point for angular-starter-oidc-cli
  */
 
 const { program } = require('commander');
@@ -9,8 +9,8 @@ const { createAngularStarter } = require('../src/index');
 const packageJson = require('../package.json');
 
 program
-  .name('angular-starter')
-  .description('CLI to create Angular starter applications from templates')
+  .name('angular-starter-oidc')
+  .description('CLI to create Angular starter applications from templates with OIDC support')
   .version(packageJson.version);
 
 program

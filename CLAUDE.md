@@ -15,14 +15,24 @@ This CLI tool scaffolds new Angular applications from the `angular-starter-app-t
 
 ### Required Tokens & Their Locations
 
-#### 1. **`__APP_NAME__`** - Application name
+#### 1. **`__APP_NAME__`** - npm package name (auto-generated)
 - `package.json` (line 2) - 1 occurrence
 - `angular.json` (lines 6, 55, 58) - 3 occurrences
-- `src/app/app.spec.ts` (line 21) - 1 occurrence
-- `README.md` (line 1) - 1 occurrence
 
-**Prompt**: "What is your application name?" (e.g., "my-awesome-app")
-**Usage**: Use as-is (no case conversion needed)
+**Source**: Automatically converted from user's display name
+**Format**: npm-friendly (lowercase, hyphens, no spaces)
+**Examples**:
+  - "My Awesome App" → "my-awesome-app"
+  - "MyAwesomeApp" → "my-awesome-app"
+  - "my_awesome_app" → "my-awesome-app"
+
+#### 1a. **`__APP_DISPLAY_NAME__`** - User-friendly display name
+- `src/app/app.spec.ts` (line 21) - 1 occurrence
+- `README.md` (line 1) - 1 occurrence (if template uses it)
+
+**Source**: User input, used as-is
+**Format**: Any valid display name (spaces, capitalization, etc. allowed)
+**Usage**: For human-readable contexts like documentation and test descriptions
 
 #### 2. **`__OIDC_AUTHORITY__`** - OIDC Authority URL
 - `public/assets/app-config.json` (line 3)
@@ -72,13 +82,37 @@ This CLI tool scaffolds new Angular applications from the `angular-starter-app-t
 
 ## CLI Workflow
 
-### 1. User Prompts (in order)
+### 1. Name Conversion and User Prompts
+
+**Project Name Handling:**
+The CLI accepts flexible project names and automatically converts them to npm-friendly package names:
+
+```javascript
+// User provides display name (can be anything)
+const displayName = "My Awesome App";  // User input
+
+// CLI converts to npm-friendly package name
+const packageName = toNpmPackageName(displayName);  // "my-awesome-app"
+
+// Both are available as tokens:
+// __APP_DISPLAY_NAME__ = "My Awesome App"
+// __APP_NAME__ = "my-awesome-app"
 ```
-1. Application name
+
+**Conversion Rules:**
+- CamelCase → kebab-case: "MyApp" → "my-app"
+- Spaces → hyphens: "My App" → "my-app"
+- Underscores → hyphens: "my_app" → "my-app"
+- Remove invalid chars: "My-App!" → "my-app"
+- Lowercase everything
+
+**User Prompts (in order):**
+```
+1. Application name (flexible format, will be converted to package name)
 2. OIDC authority URL
 3. OIDC client ID
 4. OIDC redirect URL (default: http://localhost:4200)
-5. API base URL (default: http://localhost:3000)
+5. Resource Server URL (default: http://localhost:8080)
 6. VCS host (github or gitlab)
 7. Package manager (npm, pnpm, or yarn)
 8. Node version (default: 20)
@@ -121,10 +155,10 @@ Replace the entire file with user values:
     "postLogoutRedirectUri": "<user_redirect_url>",
     "scope": "openid profile email",
     "responseType": "code",
-    "secureRoutes": ["<user_api_base_url>"]
+    "secureRoutes": ["<user_resource_server_url>"]
   },
-  "api": {
-    "baseUrl": "<user_api_base_url>"
+  "resourceServer": {
+    "baseUrl": "<user_resource_server_url>"
   }
 }
 ```
@@ -158,10 +192,10 @@ Next steps:
 
 Configuration:
   - OIDC: <authority>
-  - API: <api_base_url>
+  - Resource Server: <resource_server_url>
   - Edit public/assets/app-config.json to change runtime config
 
-Documentation: See README.md and docs/adrs/
+Documentation: See README.md
 ```
 
 ## Important Implementation Notes
@@ -183,7 +217,9 @@ Documentation: See README.md and docs/adrs/
 ### 4. Validate User Input
 - **OIDC Authority**: Must be valid HTTPS URL (or HTTP for localhost)
 - **Redirect URL**: Valid URL format
-- **App Name**: Valid npm package name (lowercase, hyphens, no spaces)
+- **App Name**: Accepts flexible display names (spaces, capitalization allowed)
+  - Validation: Must contain at least one alphanumeric character
+  - Automatically converted to npm-friendly package name
 - **Package Manager**: Must be installed on user's system
 
 ### 5. Error Handling
@@ -224,12 +260,19 @@ program
 
 ### Using Inquirer.js
 ```javascript
+// Import conversion and validation functions
+const { toNpmPackageName, isValidDisplayName } = require('./validators/validators');
+
+// Accept flexible project name as CLI argument
+const displayName = process.argv[2]; // e.g., "My Awesome App"
+const packageName = toNpmPackageName(displayName); // "my-awesome-app"
+
+// Show conversion to user
+console.log(`📦 Project name: ${displayName}`);
+console.log(`   Package name: ${packageName}\n`);
+
+// Prompt for other configuration
 const answers = await inquirer.prompt([
-  {
-    name: 'appName',
-    message: 'Application name:',
-    validate: (input) => /^[a-z0-9-]+$/.test(input)
-  },
   {
     name: 'oidcAuthority',
     message: 'OIDC authority URL:',
@@ -237,6 +280,13 @@ const answers = await inquirer.prompt([
   },
   // ... other prompts
 ]);
+
+// Pass both names to configuration
+const config = {
+  displayName,  // User-friendly name
+  packageName,  // npm-friendly name
+  ...answers
+};
 ```
 
 ## Repository Structure Assumptions
@@ -250,7 +300,6 @@ angular-starter-app-template/
 │   ├── pre-commit
 │   ├── pre-push
 │   └── commit-msg
-├── docs/adrs/
 ├── public/assets/app-config.json
 ├── src/
 │   └── app/

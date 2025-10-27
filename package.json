@@ -1,10 +1,10 @@
 {
-  "name": "angular-starter-cli",
+  "name": "angular-starter-oidc-cli",
   "version": "1.0.0",
-  "description": "A CLI for creating a starter app in Angular with a template and customizable with the arguments provided",
+  "description": "A CLI for creating Angular starter applications from templates with OIDC authentication support",
   "main": "src/index.js",
   "bin": {
-    "angular-starter": "./bin/cli.js"
+    "angular-starter-oidc": "./bin/cli.js"
   },
   "scripts": {
     "test": "node test/basic-test.js"
@@ -14,14 +14,28 @@
     "cli",
     "starter",
     "template",
-    "generator"
+    "generator",
+    "oidc",
+    "authentication",
+    "scaffold"
   ],
-  "author": "",
+  "author": "Spokay",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Spokay/angular-starter-oidc-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Spokay/angular-starter-oidc-cli/issues"
+  },
+  "homepage": "https://github.com/Spokay/angular-starter-oidc-cli#readme",
   "dependencies": {
     "commander": "^11.0.0",
     "chalk": "^4.1.2",
     "ora": "^5.4.1",
     "inquirer": "^8.2.5"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }

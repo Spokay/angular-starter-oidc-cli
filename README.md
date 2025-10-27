@@ -7,7 +7,7 @@ A CLI tool for scaffolding Angular applications with OIDC authentication from th
 This CLI tool scaffolds new Angular applications from the [angular-starter-app-template](https://github.com/Spokay/angular-starter-app-template) repository. It guides you through an interactive setup process to configure:
 
 - OIDC authentication (authority, client ID, redirect URL)
-- API integration
+- Resource Server integration
 - VCS provider (GitHub or GitLab)
 - Package manager (npm, pnpm, or yarn)
 - Node.js version
@@ -39,7 +39,7 @@ The CLI will interactively prompt you for:
 1. OIDC authority URL
 2. OIDC client ID
 3. OIDC redirect URL (default: `http://localhost:4200`)
-4. API base URL (default: `http://localhost:3000`)
+4. Resource Server URL (default: `http://localhost:8080`)
 5. VCS host (github or gitlab)
 6. Package manager (npm, pnpm, or yarn)
 7. Node.js version (default: 20)
@@ -96,7 +96,7 @@ Please provide the following configuration:
 ? What is your OIDC authority URL? https://idp.example.com/realms/my-realm
 ? What is your OIDC client ID? my-spa-client
 ? What is your OIDC redirect URL? http://localhost:4200
-? What is your API base URL? http://localhost:3000
+? What is your Resource Server URL? http://localhost:8080
 ? Which VCS host are you using? github
 ? Which package manager would you like to use? npm
 ? Which Node.js version? 20
@@ -117,20 +117,20 @@ Next steps:
 
 Configuration:
   - OIDC: https://idp.example.com/realms/my-realm
-  - API: http://localhost:3000
+  - Resource Server: http://localhost:8080
   - Edit public/assets/app-config.json to change runtime config
 
 Documentation:
-  See README.md and docs/adrs/
+  See README.md
 ```
 
 ## Input Validation
 
 The CLI validates all inputs:
-- **Project name**: Must be valid npm package name (lowercase, hyphens, no spaces)
+- **Project name**: Accepts flexible display names (spaces, capitalization allowed) - automatically converted to npm-friendly package name
 - **OIDC Authority**: Must be valid HTTPS URL (or HTTP for localhost)
 - **Redirect URL**: Must be valid URL format
-- **API Base URL**: Must be valid URL format
+- **Resource Server URL**: Must be valid URL format
 - **Package Manager**: Must be installed on your system
 
 ## Development
