@@ -1,6 +1,6 @@
-# angular-starter-cli
+# angular-starter-oidc-cli
 
-A CLI tool for scaffolding Angular applications with OIDC authentication from the `angular-starter-app-template`.
+A CLI for creating Angular starter applications from templates with OIDC authentication support.
 
 ## Description
 
@@ -24,7 +24,7 @@ npm link
 
 ### Global Installation (when published)
 ```bash
-npm install -g angular-starter-cli
+npm install -g angular-starter-oidc-cli
 ```
 
 ## Usage
@@ -32,7 +32,7 @@ npm install -g angular-starter-cli
 ### Create a new Angular project
 
 ```bash
-angular-starter create <project-name>
+angular-starter-oidc create <project-name>
 ```
 
 The CLI will interactively prompt you for:
@@ -48,10 +48,10 @@ The CLI will interactively prompt you for:
 
 ```bash
 # Use custom template URL
-angular-starter create my-app --template https://github.com/Spokay/angular-starter-app-template
+angular-starter-oidc create my-app --template https://github.com/Spokay/angular-starter-app-template
 
 # Create in specific directory
-angular-starter create my-app --path ./projects
+angular-starter-oidc create my-app --path ./projects
 ```
 
 ### Options
@@ -88,8 +88,8 @@ angular-starter create my-app --path ./projects
 ## Example
 
 ```bash
-$ angular-starter create my-awesome-app
-🚀 Angular Starter CLI
+$ angular-starter-oidc create my-awesome-app
+🚀 Angular Starter OIDC CLI
 
 Please provide the following configuration:
 
@@ -141,7 +141,7 @@ npm install
 
 # Test locally
 npm link
-angular-starter create test-project
+angular-starter-oidc create test-project
 ```
 
 ## License
