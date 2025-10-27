@@ -44,17 +44,32 @@ try {
   const mainModule = require('../src/index.js');
   assert(typeof mainModule.createAngularStarter === 'function', 'Should export createAngularStarter function');
   assert(typeof mainModule.cloneTemplate === 'function', 'Should export cloneTemplate function');
-  assert(typeof mainModule.customizeProject === 'function', 'Should export customizeProject function');
   assert(typeof mainModule.isValidGitUrl === 'function', 'Should export isValidGitUrl function');
-  
+  assert(typeof mainModule.isValidNpmPackageName === 'function', 'Should export isValidNpmPackageName function');
+  assert(typeof mainModule.replaceTokens === 'function', 'Should export replaceTokens function');
+  assert(typeof mainModule.handleCIFiles === 'function', 'Should export handleCIFiles function');
+  assert(typeof mainModule.generateAppConfig === 'function', 'Should export generateAppConfig function');
+  assert(typeof mainModule.extractRealm === 'function', 'Should export extractRealm function');
+
   // Test URL validation
   assert(mainModule.isValidGitUrl('https://github.com/user/repo.git') === true, 'Should accept valid HTTPS git URL');
   assert(mainModule.isValidGitUrl('git@github.com:user/repo.git') === true, 'Should accept valid SSH git URL');
   assert(mainModule.isValidGitUrl('https://github.com/user/repo') === true, 'Should accept valid HTTPS URL without .git');
   assert(mainModule.isValidGitUrl('invalid url') === false, 'Should reject invalid URL');
   assert(mainModule.isValidGitUrl('') === false, 'Should reject empty URL');
-  
-  console.log('✅ Test 3 passed: Main module exports correct functions and validates URLs');
+
+  // Test npm package name validation
+  assert(mainModule.isValidNpmPackageName('my-app') === true, 'Should accept valid package name');
+  assert(mainModule.isValidNpmPackageName('my-app-123') === true, 'Should accept package name with numbers');
+  assert(mainModule.isValidNpmPackageName('MyApp') === false, 'Should reject uppercase letters');
+  assert(mainModule.isValidNpmPackageName('my app') === false, 'Should reject spaces');
+  assert(mainModule.isValidNpmPackageName('my_app') === false, 'Should reject underscores');
+
+  // Test realm extraction
+  assert(mainModule.extractRealm('https://idp.example.com/realms/test-realm') === 'test-realm', 'Should extract realm from URL');
+  assert(mainModule.extractRealm('https://idp.example.com') === 'my-realm', 'Should return default realm if not found');
+
+  console.log('✅ Test 3 passed: Main module exports correct functions and validates inputs');
 } catch (error) {
   console.error('❌ Test 3 failed:', error.message);
   process.exit(1);
