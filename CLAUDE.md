@@ -75,7 +75,47 @@ This CLI tool scaffolds new Angular applications from the `angular-starter-app-t
 - pnpm → "pnpm"
 - yarn → "yarn"
 
-#### 8. **`__CLI_PACKAGE__`** - Your CLI package name (optional)
+#### 8. **`__REDIRECT_URL__`** - OAuth redirect URL after login
+- `public/assets/app-config.json`
+
+**Source**: User input
+**Default**: "http://localhost:4200"
+**Format**: Full URL where users are redirected after login
+**Validation**: Must be a valid URL
+
+#### 9. **`__POST_LOGOUT_REDIRECT_URL__`** - OAuth redirect URL after logout
+- `public/assets/app-config.json`
+
+**Source**: User input (same as `__REDIRECT_URL__`)
+**Default**: Same as redirect URL
+**Format**: Full URL where users are redirected after logout
+
+#### 10. **`__BACKEND_URL__`** - Backend API base URL
+- `public/assets/app-config.json`
+- `src/proxy.conf.json` (if proxy enabled)
+
+**Source**: User input (resourceServerUrl)
+**Default**: "http://localhost:8080"
+**Format**: Backend server URL
+**Validation**: Must be a valid URL
+
+#### 11. **`__SECURE_ROUTES__`** - Routes requiring authentication tokens (conditional)
+- `public/assets/app-config.json`
+
+**Source**: Conditional based on proxy choice
+**Values**:
+- If proxy enabled: `"/api"` (relative path that gets proxied)
+- If proxy disabled: Same as `__BACKEND_URL__` (full backend URL)
+
+#### 12. **`__PROXY_CONFIG__`** - Development proxy configuration (conditional)
+- `angular.json`
+
+**Source**: Conditional based on proxy choice
+**Values**:
+- If proxy enabled: `,\n            "proxyConfig": "src/proxy.conf.json"`
+- If proxy disabled: `` (empty string, removes proxy config)
+
+#### 13. **`__CLI_PACKAGE__`** - Your CLI package name (optional)
 - `README.md` (lines 42, 280)
 
 **Value**: Your published npm package name (e.g., "@your-org/angular-oidc-cli")
@@ -113,9 +153,13 @@ const packageName = toNpmPackageName(displayName);  // "my-awesome-app"
 3. OIDC client ID
 4. OIDC redirect URL (default: http://localhost:4200)
 5. Resource Server URL (default: http://localhost:8080)
-6. VCS host (github or gitlab)
-7. Package manager (npm, pnpm, or yarn)
-8. Node version (default: 20)
+6. Use proxy for development? (yes/no, default: yes)
+   - Helps avoid CORS issues during local development
+   - If yes: Uses /api path with proxy configuration
+   - If no: Uses direct backend URL (backend must handle CORS)
+7. VCS host (github or gitlab)
+8. Package manager (npm, pnpm, or yarn)
+9. Node version (default: 20)
 ```
 
 ### 2. Template Acquisition
@@ -130,11 +174,27 @@ const filesToReplace = [
   'package.json',
   'angular.json',
   'src/app/app.spec.ts',
+  'src/index.html',
   'README.md',
   'public/assets/app-config.json',
+  'src/proxy.conf.json',       // Always process (contains __BACKEND_URL__)
   '.github/workflows/ci.yml',  // Only if VCS = github
   '.gitlab-ci.yml'              // Only if VCS = gitlab
 ];
+```
+
+**Proxy Configuration Logic:**
+
+When replacing tokens, the CLI must handle conditional values based on the proxy choice:
+
+```javascript
+// If user chose to use proxy (useProxy = true)
+const proxyConfig = ',\n            "proxyConfig": "src/proxy.conf.json"';
+const secureRoutes = '"/api"';  // Relative path
+
+// If user chose NOT to use proxy (useProxy = false)
+const proxyConfig = '';  // Empty string removes the proxy config line
+const secureRoutes = config.resourceServerUrl;  // Full backend URL
 ```
 
 ### 4. CI File Selection
@@ -145,7 +205,27 @@ const filesToReplace = [
 ### 5. Additional Configuration
 
 #### Update `app-config.json`
-Replace the entire file with user values:
+Replace the entire file with user values. The `secureRoutes` value is **conditional** based on proxy choice:
+
+**With Proxy (useProxy = true):**
+```json
+{
+  "oidc": {
+    "authority": "<user_oidc_authority>",
+    "clientId": "<user_client_id>",
+    "redirectUrl": "<user_redirect_url>",
+    "postLogoutRedirectUri": "<user_redirect_url>",
+    "scope": "openid profile email",
+    "responseType": "code",
+    "secureRoutes": ["/api"]
+  },
+  "resourceServer": {
+    "baseUrl": "<user_resource_server_url>"
+  }
+}
+```
+
+**Without Proxy (useProxy = false):**
 ```json
 {
   "oidc": {
@@ -193,6 +273,7 @@ Next steps:
 Configuration:
   - OIDC: <authority>
   - Resource Server: <resource_server_url>
+  - Proxy: <enabled/disabled>
   - Edit public/assets/app-config.json to change runtime config
 
 Documentation: See README.md
@@ -319,6 +400,7 @@ Consider supporting these env vars for CI/automation:
 ```bash
 ANGULAR_OIDC_AUTHORITY=https://...
 ANGULAR_OIDC_CLIENT_ID=my-client
+ANGULAR_USE_PROXY=true
 ANGULAR_VCS_HOST=github
 ANGULAR_PKG_MGR=npm
 ```

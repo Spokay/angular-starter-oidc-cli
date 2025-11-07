@@ -16,6 +16,7 @@ function printSuccessMessage(projectName, config) {
   console.log(chalk.cyan.bold('\nConfiguration:'));
   console.log(chalk.white(`  - OIDC: ${config.oidcAuthority}`));
   console.log(chalk.white(`  - Resource Server: ${config.resourceServerUrl}`));
+  console.log(chalk.white(`  - Proxy: ${config.useProxy ? 'enabled' : 'disabled'}`));
   console.log(chalk.white('  - Edit public/assets/app-config.json to change runtime config'));
 
   console.log(chalk.cyan.bold('\nDocumentation:'));
