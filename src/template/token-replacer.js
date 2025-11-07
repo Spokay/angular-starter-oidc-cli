@@ -31,7 +31,8 @@ async function replaceTokens(targetPath, config) {
       'src/app/layout/header/header.html',
       'src/app/layout/footer/footer.html',
       'README.md',
-      'public/assets/app-config.json'
+      'public/assets/app-config.json',
+      'src/proxy.conf.json'  // Always process, contains __BACKEND_URL__
     ];
 
     // Add CI files based on VCS choice
@@ -41,12 +42,26 @@ async function replaceTokens(targetPath, config) {
       filesToReplace.push('.gitlab-ci.yml');
     }
 
+    // Conditional values based on proxy configuration
+    const proxyConfig = config.useProxy
+      ? ',\n            "proxyConfig": "src/proxy.conf.json"'
+      : '';
+
+    const secureRoutes = config.useProxy
+      ? '"/api"'  // Relative path for proxy
+      : `"${config.resourceServerUrl}"`; // Full URL for direct calls
+
     // Token mapping
     const tokens = {
       '__APP_NAME__': config.packageName, // npm-friendly package name
       '__APP_DISPLAY_NAME__': config.displayName, // user-friendly display name
       '__OIDC_AUTHORITY__': config.oidcAuthority,
       '__CLIENT_ID__': config.oidcClientId,
+      '__REDIRECT_URL__': config.redirectUrl,
+      '__POST_LOGOUT_REDIRECT_URL__': config.redirectUrl,
+      '__BACKEND_URL__': config.resourceServerUrl,
+      '__SECURE_ROUTES__': secureRoutes,
+      '__PROXY_CONFIG__': proxyConfig,
       '__REALM__': extractRealm(config.oidcAuthority),
       '__NODE_VERSION__': config.nodeVersion,
       '__PKG_MGR__': config.packageManager,

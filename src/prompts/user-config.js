@@ -44,6 +44,12 @@ async function promptUserConfiguration(displayName, packageName) {
       validate: (input) => validateUrl(input, 'Resource server URL')
     },
     {
+      type: 'confirm',
+      name: 'useProxy',
+      message: 'Use proxy for development? (recommended to avoid CORS issues)',
+      default: true
+    },
+    {
       type: 'list',
       name: 'vcsHost',
       message: 'Which VCS host are you using?',
@@ -80,6 +86,7 @@ async function promptUserConfiguration(displayName, packageName) {
     oidcClientId: answers.oidcClientId,
     redirectUrl: answers.redirectUrl,
     resourceServerUrl: answers.resourceServerUrl,
+    useProxy: answers.useProxy,
     vcsHost: answers.vcsHost,
     packageManager: answers.packageManager,
     pkgMgrRun,

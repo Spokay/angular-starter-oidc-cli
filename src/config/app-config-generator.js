@@ -14,6 +14,11 @@ function generateAppConfig(targetPath, config) {
   try {
     const appConfigPath = path.join(targetPath, 'public', 'assets', 'app-config.json');
 
+    // Determine secureRoutes based on proxy configuration
+    const secureRoutes = config.useProxy
+      ? ['/api']  // Relative path for proxy setup
+      : [config.resourceServerUrl]; // Full URL for direct calls
+
     // Create the config object
     const appConfig = {
       oidc: {
@@ -23,7 +28,7 @@ function generateAppConfig(targetPath, config) {
         postLogoutRedirectUri: config.redirectUrl,
         scope: 'openid profile email',
         responseType: 'code',
-        secureRoutes: [config.resourceServerUrl]
+        secureRoutes: secureRoutes
       },
       resourceServer: {
         baseUrl: config.resourceServerUrl
