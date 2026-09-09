@@ -52,6 +52,12 @@ function generateAppConfig(targetPath: string, config: ProjectAnswers): void {
       resourceServer: {
         baseUrl: apiRoot,
       },
+      // The generated app's LoggerService reads this. It is written here rather than left to
+      // token replacement because this function rewrites the file wholesale, so a key present
+      // only in the template would be dropped from every scaffolded project.
+      logging: {
+        level: 'info',
+      },
     };
 
     // Ensure directory exists

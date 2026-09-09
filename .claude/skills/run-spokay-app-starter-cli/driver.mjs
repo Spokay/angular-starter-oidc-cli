@@ -205,6 +205,9 @@ async function verifyAngular(dir, answers) {
           secureRoutes: [apiBaseUrl(answers)],
         },
         resourceServer: { baseUrl: apiBaseUrl(answers) },
+        // The generated app's LoggerService level. Written by generateAppConfig, not by
+        // token replacement, so it is asserted here like every other generated key.
+        logging: { level: 'info' },
       },
       'app-config.json',
     ));
