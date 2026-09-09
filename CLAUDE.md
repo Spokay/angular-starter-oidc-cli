@@ -143,14 +143,11 @@ ships and the file a project gets cannot drift.
   an interface makes `ask()` stop compiling for a reason that reads as unrelated.
 - **eslint flat config composes with `extends`, not by spreading.** Giving a config block
   its own `rules` after spreading `js.configs.recommended` replaces the recommended set
-  wholesale — which silently disabled every rule but `no-unused-vars` here for a while. `Question` in `src/types.ts` is
-  that union narrowed to the fields this CLI sets.
-- **`ProjectAnswers` is a type alias, not an interface.** An alias gets an implicit index
-  signature, which is what lets it satisfy inquirer's `Answers` constraint; switching it to
-  an interface makes `ask()` stop compiling for a reason that reads as unrelated.
-- **eslint flat config composes with `extends`, not by spreading.** Giving a config block
-  its own `rules` after spreading `js.configs.recommended` replaces the recommended set
   wholesale — which silently disabled every rule but `no-unused-vars` here for a while.
+- **`generateAppConfig` rewrites `app-config.json` wholesale.** It is a post-step, not token
+  replacement, so a key added only to the Angular template is dropped from every scaffolded
+  project. Add it in `src/config/app-config-generator.ts` in the same change — the run
+  skill's matrix asserts the generated file field for field.
 
 ## Testing
 
